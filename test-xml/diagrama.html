@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Mapa do banco</title>
+
+    <script type="module">
+        import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+
+        mermaid.initialize({
+            startOnLoad: true
+        });
+    </script>
+</head>
+
+<body>
+
+    <h1>Mapa do banco</h1>
+
+    <div class="mermaid">
+
+erDiagram
+    tb_exploracao {
+        serial id_exploracao PK
+        int4 id_propriedade FK
+    }
+    tb_atualizacao_cadastral_produtor_nucleo {
+        serial id_atualizacao_cadastral_produtor_nucleo PK
+        int4 id_exploracao FK
+    }
+    tb_propriedade {
+        serial id_propriedade PK
+    }
+    tb_exploracao_produtor {
+        serial id_exploracao_produtor PK
+        int4 id_exploracao FK
+    }
+    tb_nucleo {
+        serial id_nucleo PK
+        int4 id_exploracao FK
+    }
+    tb_atualizacao_cadastral_produtor_nucleo }o--|| tb_exploracao : rr_atual_cad_prod_nucleo_exploracao
+    tb_exploracao }o--|| tb_propriedade : rr_prop_exp
+    tb_exploracao_produtor }o--|| tb_exploracao : rr_exp_exp_prod
+    tb_nucleo }o--|| tb_exploracao : rr_nucleo_exploracao
+
+    </div>
+
+</body>
+</html>

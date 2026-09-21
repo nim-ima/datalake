@@ -1,0 +1,55 @@
+# comportamento prod 
+tb_atualizacao_cadastral_produtor
+    tb_atualizacao_cadastral_produtor
+    tb_atualizacao_cadastral_produtor
+tb_atualizacao_cadastral_produtor_nucleo
+    tb_atualizacao_cadastral_produtor_nucleo
+    tb_atualizacao_cadastral_produtor_nucleo
+tb_exploracao
+    tb_exploracao
+    tb_exploracao
+    tb_exploracao
+    tb_exploracao
+    tb_exploracao
+    tb_exploracao
+    tb_exploracao
+tb_propriedade
+tb_exploracao_produtor
+tb_produtor
+tb_lancamento
+tb_estratificacao_nucleo
+tb_nucleo
+    tb_nucleo
+    tb_nucleo
+    tb_nucleo
+    tb_nucleo
+tb_estratificacao
+    tb_estratificacao
+    tb_estratificacao
+    tb_estratificacao
+    tb_estratificacao
+tb_gta
+    tb_gta
+    tb_gta
+    tb_gta
+tb_estratificacao_gta
+    tb_estratificacao_gta
+    tb_estratificacao_gta
+    tb_estratificacao_gta
+tb_faixa_etaria
+    tb_faixa_etaria
+    tb_faixa_etaria
+    tb_faixa_etaria
+
+
+# comportamento usuario fraude
+tb_Log
+    tb_Log
+    tb_Log
+    tb_Log
+    tb_Log
+tb_log_detalhe
+    tb_log_detalhe
+    tb_log_detalhe
+    tb_log_detalhe
+
