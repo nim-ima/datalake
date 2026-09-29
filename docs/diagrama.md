@@ -1,0 +1,62 @@
+```mermaid
+erDiagram
+    tb_pessoa_fisica |o--o{ tb_estabelecimento : "id_pessoa_fisica"
+    tb_pessoa_juridica |o--o{ tb_estabelecimento : "id_pessoa_juridica"
+    tb_classe_estabelecimento |o--o{ tb_estabelecimento : "id_classe_estabelecimento"
+    tb_categoria_estabelecimento |o--o{ tb_estabelecimento : "id_categoria_estabelecimento"
+    tb_usuario |o--o{ tb_estabelecimento : "id_usuario_atualizacao"
+    tb_integradora_cooperativa |o--o{ tb_estabelecimento : "id_integradora_cooperativa"
+    tb_pessoa ||--o{ tb_estabelecimento : "id_pessoa"
+    tb_registro_estabelecimento |o--o{ tb_estabelecimento : "id_registro_estabelecimento"
+    tb_area_atuacao_estab |o--o{ tb_estabelecimento : "id_area_atuacao_estab"
+    tb_atividade_desenvolvida |o--o{ tb_estabelecimento : "id_atividade_desenvolvida"
+    tb_classificacao |o--o{ tb_estabelecimento : "id_classificacao"
+    tb_estabelecimento ||--o{ tb_estabelecimento_comercio : "id_estabelecimento_pai"
+    tb_estabelecimento ||--o{ tb_estabelecimento_comercio : "id_estabelecimento_filho"
+    tb_estabelecimento ||--o{ tb_estabelecimento_inspecao : "id_estabelecimento"
+    tb_estabelecimento ||--o{ tb_estratificacao_estab : "id_estabelecimento"
+    tb_estabelecimento |o--o{ tb_gta : "id_estab_contratou_abate"
+    tb_estabelecimento |o--o{ tb_gta_origem_outro_estado : "id_estab_contratou_abate"
+    tb_estabelecimento |o--o{ tb_opcao_recolhimento_fundo : "id_estabelecimento"
+    tb_estabelecimento ||--o{ tb_producao_leiteira : "id_estabelecimento"
+    tb_estabelecimento |o--o{ tb_registro_estabelecimento_historico : "id_estabelecimento"
+    tb_estabelecimento ||--o{ tb_responsavel_estabelecimento : "id_estabelecimento"
+    tb_estabelecimento |o--o{ tb_tipo_produto_caracteristica_estabelecimento : "id_estabelecimento"
+    tb_estabelecimento {
+        serial id_estabelecimento PK
+        bpchar in_exporta_ue  "Credenciado Exportação para União Européia*"
+        bpchar in_interditado
+        varchar nr_inscricao_estadual
+        timestamp dt_descredenciamento
+        varchar cd_sim
+        varchar cd_sif
+        varchar cd_sie
+        int4 id_pessoa_fisica FK
+        bpchar in_estabelecimento_urbano  "Indica se o Estabelecimento é Urbano"
+        int4 id_pessoa_juridica FK
+        int4 id_classe_estabelecimento FK
+        int4 id_categoria_estabelecimento FK
+        bpchar in_sofre_inspecao  "Campo que indica se o estabelecimento sofre inspeção ou não."
+        timestamp dt_atualizacao  "Data e Hora da atualização"
+        bpchar tp_estabelecimento
+        bpchar in_ativo
+        int4 id_usuario_atualizacao FK
+        timestamp dt_envio_pga  "Data e Hora de envio MAPA"
+        int4 id_integradora_cooperativa FK
+        int4 id_pessoa FK
+        int4 id_registro_estabelecimento FK
+        bpchar tp_local_estabelecimento
+        bpchar in_propriedade_rural
+        int4 id_produtor
+        int4 id_propriedade
+        bpchar in_sisbi
+        bpchar in_eapp
+        varchar numero_dap
+        bpchar in_selo_arte
+        varchar numero_selo_arte
+        timestamp dt_concessao_registro
+        int4 id_area_atuacao_estab FK
+        int4 id_atividade_desenvolvida FK
+        int4 id_classificacao FK
+    }
+```
