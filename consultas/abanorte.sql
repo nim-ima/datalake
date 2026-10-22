@@ -10,10 +10,10 @@ SELECT
     ctv.nm_variedade,
     cptvp.qt_colheita_producao AS total_carga,
     ctum.ds_unidade_medida
-FROM db_dlsidagro_staging.client_tb_ptv AS 	cptv
-JOIN db_dlsidagro_staging.core_tb_municipio AS 	mno
+FROM db_dlsidagro_staging.client_tb_ptv AS cptv
+JOIN db_dlsidagro_staging.core_tb_municipio AS mno
     ON cptv.id_municipio_origem = mno.id_municipio
-JOIN db_dlsidagro_staging.core_tb_municipio AS 	mnd
+JOIN db_dlsidagro_staging.core_tb_municipio AS mnd
     ON cptv.id_municipio_destino = mnd.id_municipio
 JOIN db_dlsidagro_staging.client_tb_ptv_produto AS cptvp
     ON cptv.id_ptv = cptvp.id_ptv
