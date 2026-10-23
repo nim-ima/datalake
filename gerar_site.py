@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-
+ 
 HTML = r"""<!doctype html>
 <html lang="pt-br">
 <head>
@@ -24,6 +24,7 @@ h2{margin:.2em 0} h3{margin:1.2em 0 .4em}
 .chip{background:var(--chip);border-radius:4px;padding:1px 6px;font-size:12px;margin-left:4px}
 button{cursor:pointer;font-size:12px;margin-left:8px;border:1px solid var(--bd);background:var(--bg);color:var(--fg);border-radius:4px;padding:2px 8px}
 .scroll{overflow-x:auto}
+.nota{white-space:pre-wrap;border-left:3px solid var(--ac);background:var(--chip);padding:8px 12px;border-radius:4px;margin:10px 0}
 </style>
 </head>
 <body>
@@ -37,7 +38,7 @@ const D = __DADOS__;
 const T = D.tabelas, R = D.relacoes;
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-
+ 
 // ---- índices ----
 const saindo = {}, entrando = {}, colFK = {}, porColuna = {}, pkSozinha = {};
 for (const r of R) {
@@ -51,7 +52,7 @@ for (const [k, t] of Object.entries(T)) {
   for (const c of t.colunas) (porColuna[c.nome] ||= []).push(k);
   if (pks.length === 1) (pkSozinha[pks[0].nome] ||= []).push(k);
 }
-
+ 
 // ---- helpers ----
 const lt = k => T[k]
   ? `<a href="#t/${encodeURIComponent(k)}">${esc(T[k].datalake)}</a>`
@@ -63,7 +64,7 @@ const alvos = r => r.candidatos
 const chips = r => (r.implied ? '<span class="chip">implícita</span>' : "") +
                    (r.candidatos ? '<span class="chip">ambígua</span>' : "");
 const provaveis = (k, nome) => /^id_/.test(nome) ? (pkSozinha[nome] || []).filter(x => x !== k) : [];
-
+ 
 function liga(k, c) {
   const fks = colFK[k + "|" + c.nome] || [];
   if (fks.length) {
@@ -75,7 +76,7 @@ function liga(k, c) {
     ? `<span class="prov">provável: ${p.slice(0, 6).map(lt).join(", ")}${p.length > 6 ? " …" : ""}</span>`
     : "";
 }
-
+ 
 // ---- telas ----
 function viewHome() {
   const por = {};
@@ -84,7 +85,7 @@ function viewHome() {
     <p class="mut">${Object.keys(T).length} tabelas · ${R.length} relações. Digite um nome de tabela ou coluna acima.</p>
     <p>${Object.entries(por).map(([s, n]) => `<span class="chip">${esc(s)}: ${n}</span>`).join(" ")}</p>`;
 }
-
+ 
 function viewTabela(k) {
   const t = T[k];
   if (!t) return `<p>Tabela não encontrada: ${esc(k)}</p>`;
@@ -93,7 +94,7 @@ function viewTabela(k) {
     return `<tr><td>${lc(c.nome)}</td><td class="mut">${esc(c.tipo)}</td>
       <td>${c.pk ? '<span class="chip">PK</span>' : ""}</td>
       <td>${liga(k, c)}${n ? `<div class="mut">← referenciada por ${n} relação(ões)</div>` : ""}</td>
-      <td class="mut">${esc(c.obs)}</td></tr>`;
+      <td class="mut">${c.nota ? `<div class="nota">${esc(c.nota)}</div>` : ""}${esc(c.obs)}</td></tr>`;
   }).join("");
   const sai = (saindo[k] || []).map(r =>
     `<tr><td>${r.pares.map(p => lc(p[0])).join(", ")}</td>
@@ -105,6 +106,7 @@ function viewTabela(k) {
      <td class="mut">${esc(r.fk)}${chips(r)}</td></tr>`).join("");
   return `<h2>${esc(t.datalake)}<button data-c="${esc(t.datalake)}">copiar</button></h2>
     <div class="mut">${esc(t.schema)}.${esc(t.nome)}${t.obs ? " — " + esc(t.obs) : ""}</div>
+    ${t.nota ? `<div class="nota">${esc(t.nota)}</div>` : ""}
     <h3>Colunas</h3>
     <div class="scroll"><table><tr><th>coluna</th><th>tipo</th><th></th><th>liga a</th><th>observação</th></tr>${linhas}</table></div>
     <h3>Aponta para (${(saindo[k] || []).length})</h3>
@@ -112,7 +114,7 @@ function viewTabela(k) {
     <h3>É apontada por (${(entrando[k] || []).length})</h3>
     <div class="scroll"><table>${ent || '<tr><td class="mut">nenhuma</td></tr>'}</table></div>`;
 }
-
+ 
 function viewColuna(n) {
   const ks = (porColuna[n] || []).slice().sort((a, b) => {
     const pa = T[a].colunas.find(c => c.nome === n).pk, pb = T[b].colunas.find(c => c.nome === n).pk;
@@ -127,13 +129,13 @@ function viewColuna(n) {
     <div class="mut">aparece em ${ks.length} tabela(s)</div>
     <div class="scroll"><table><tr><th>tabela</th><th>tipo</th><th></th><th>liga a</th></tr>${linhas}</table></div>`;
 }
-
+ 
 function viewBusca(q) {
   q = q.trim().toLowerCase();
   const rank = s => (s === q ? 0 : s.startsWith(q) ? 1 : 2);
   const tabs = Object.entries(T)
     .filter(([k, t]) => t.datalake.toLowerCase().includes(q) || t.nome.toLowerCase().includes(q) ||
-                        (t.obs || "").toLowerCase().includes(q))
+                        (t.obs || "").toLowerCase().includes(q) || (t.nota || "").toLowerCase().includes(q))
     .sort((a, b) => rank(a[1].datalake.toLowerCase()) - rank(b[1].datalake.toLowerCase()) ||
                     a[1].datalake.localeCompare(b[1].datalake))
     .slice(0, 40);
@@ -142,18 +144,18 @@ function viewBusca(q) {
     .sort((a, b) => rank(a.toLowerCase()) - rank(b.toLowerCase()) || a.localeCompare(b))
     .slice(0, 40);
   const obs = Object.entries(T)
-    .flatMap(([k, t]) => t.colunas.filter(c => c.obs && c.obs.toLowerCase().includes(q)).map(c => [k, c]))
+    .flatMap(([k, t]) => t.colunas.filter(c => ((c.nota || "") + " " + (c.obs || "")).toLowerCase().includes(q)).map(c => [k, c]))
     .slice(0, 30);
   return `<h3>Tabelas (${tabs.length})</h3>
-    <p>${tabs.map(([k]) => lt(k)).join("<br>") || '<span class="mut">nenhuma</span>'}</p>
+    <p>${tabs.map(([k]) => lt(k) + (T[k].nota ? ' <span class="chip">nota</span>' : "")).join("<br>") || '<span class="mut">nenhuma</span>'}</p>
     <h3>Colunas (${cols.length})</h3>
     <p>${cols.map(n => `${lc(n)} <span class="mut">${porColuna[n].length} tabela(s)</span>`).join("<br>") ||
       '<span class="mut">nenhuma</span>'}</p>
     <h3>Nas observações (${obs.length})</h3>
-    <p>${obs.map(([k, c]) => `${lt(k)}.${lc(c.nome)} <span class="mut">— ${esc(c.obs)}</span>`).join("<br>") ||
+    <p>${obs.map(([k, c]) => `${lt(k)}.${lc(c.nome)} <span class="mut">— ${esc(c.nota || c.obs)}</span>`).join("<br>") ||
       '<span class="mut">nenhuma</span>'}</p>`;
 }
-
+ 
 // ---- navegação ----
 function render() {
   $("#q").value = "";
@@ -164,7 +166,7 @@ function render() {
   window.scrollTo(0, 0);
 }
 window.addEventListener("hashchange", render);
-
+ 
 $("#q").addEventListener("input", e => {
   const v = e.target.value;
   if (v.trim()) $("#m").innerHTML = viewBusca(v); else render();
@@ -178,7 +180,7 @@ $("#q").addEventListener("keydown", e => {
   const c = Object.keys(porColuna).find(n => n.toLowerCase() === q);
   if (c) { location.hash = "#c/" + encodeURIComponent(c); }
 });
-
+ 
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-c]");
   if (!b) return;
@@ -190,21 +192,22 @@ document.addEventListener("click", e => {
   b.textContent = "copiado";
   setTimeout(() => { b.textContent = "copiar"; }, 1200);
 });
-
+ 
 render();
 </script>
 </body>
 </html>
 """
-
-
+ 
+ 
 def main():
     dados = Path("catalogo.json").read_text(encoding="utf-8")
     json.loads(dados)  # valida o JSON
     html = HTML.replace("__DADOS__", dados.replace("</", "<\\/"))
     Path("catalogo.html").write_text(html, encoding="utf-8")
     print("gerado: catalogo.html")
-
-
+ 
+ 
 if __name__ == "__main__":
     main()
+ 

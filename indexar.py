@@ -50,10 +50,47 @@ def indexar(pasta):
                     r["candidatos"] = cand      # mesmo nome em mais de um schema
     return tabelas, list(rels.values())
 
+def ler_notas(caminho="notas.md"):
+    """Formato: '## tabela' (nota da tabela) e '### coluna' (nota da coluna)."""
+    p = Path(caminho)
+    if not p.exists():
+        return {}
+    notas, tab, col = {}, None, None
+    for linha in p.read_text(encoding="utf-8").splitlines():
+        if linha.startswith("### ") and tab:
+            col = linha[4:].strip().lower()
+            notas[tab]["colunas"][col] = []
+        elif linha.startswith("## "):
+            tab, col = linha[3:].strip().lower(), None
+            notas[tab] = {"tabela": [], "colunas": {}}
+        elif tab:
+            (notas[tab]["colunas"][col] if col else notas[tab]["tabela"]).append(linha)
+    juntar = lambda ls: "\n".join(ls).strip()
+    return {t: {"tabela": juntar(v["tabela"]),
+                "colunas": {c: juntar(ls) for c, ls in v["colunas"].items()}}
+            for t, v in notas.items()}
+
+
+def aplicar_notas(tabelas):
+    chaves = {k.lower(): k for k in tabelas}
+    chaves.update({t["datalake"].lower(): k for k, t in tabelas.items()})
+    for nome, n in ler_notas().items():
+        k = chaves.get(nome)
+        if not k:
+            print("nota sem tabela correspondente:", nome)
+            continue
+        tabelas[k]["nota"] = n["tabela"]
+        nomes = {c["nome"].lower(): c for c in tabelas[k]["colunas"]}
+        for col, texto in n["colunas"].items():
+            if col in nomes:
+                nomes[col]["nota"] = texto
+            else:
+                print(f"nota de coluna sem correspondência: {nome}.{col}")
 
 if __name__ == "__main__":
     pasta = sys.argv[1] if len(sys.argv) > 1 else Path(__file__).parent / "dicionario"
     tabelas, rels = indexar(pasta)
+    aplicar_notas(tabelas)
     Path("catalogo.json").write_text(
         json.dumps({"tabelas": tabelas, "relacoes": rels}, ensure_ascii=False),
         encoding="utf-8",
