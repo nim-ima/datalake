@@ -3,4 +3,8 @@ Tabela que armazena os lançamentos acerca do rebanho.
 Pode ser um lançamento do tipo de carga inicial, venda, ajuste de rebanho, evolução, animal nascido, animal morto, animal roubado, etc.
 A cada lançamento, é lançada a quantidade de animais referentes àquele lançamento e a quantidade de animais existentes. É declarado se houve estorno e se há crédito ou débito de animais.
 
+## client_tb_exploracao
+Tabela que armazena os dados de cada exploração.
+A chave primária é a id_exploracao, logo, cada linha refere-se a uma exploração. Traz a informação de qual propriedade ocorre a exploração, a espécie, área, início, fim (caso inativa) e outros detalhes. Importante: a partir dessa tabela, é possível linkar com outras tabelas que vão trazer atributos específicos (ex: exploração de suídeos, exploração de bovinos, etc)
+
 ### id_log
